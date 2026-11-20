@@ -69,3 +69,7 @@ The suite passes as shipped. The Lab 12 handout tells you when to use the
 other three tools that `requirements-dev.txt` installs.
 
 See the Lab 12 handout on the course page for the milestones you show a TA.
+
+## AI tools used
+
+Lab 12 work in this fork was done with Claude Code (model: Claude Fable 5.2).
