@@ -1,0 +1,36 @@
+name: CI
+
+# When this workflow runs: every push to main, and every pull request.
+# Push is limited to main so a branch with an open PR is checked once
+# (by the pull_request event) instead of twice.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The workflow only needs to read the code, so give its token nothing more.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      # A runner starts as an empty machine. This puts the commit under test on it.
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      # Same Python version pyproject.toml targets, so CI matches local runs.
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      # Pinned versions of pytest, ruff, mypy and pip-audit.
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      # A failing test exits non-zero, which fails this step, the job, and the run.
+      - name: Run tests
+        run: pytest
