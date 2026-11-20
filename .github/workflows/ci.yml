@@ -34,3 +34,65 @@ jobs:
       # A failing test exits non-zero, which fails this step, the job, and the run.
       - name: Run tests
         run: pytest
+
+  # The gate: three static checks. None of them runs the service.
+  # Each is its own job with no `needs:`, so all four jobs run in parallel
+  # and a failure in one never stops the others from reporting.
+
+  lint:
+    name: ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      # Linter: reads the source for known bug patterns (rules in pyproject.toml).
+      - name: Lint
+        run: ruff check .
+
+  typecheck:
+    name: mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      # Type checker: checks the refunds package against its own annotations.
+      - name: Type check
+        run: mypy
+
+  audit:
+    name: pip-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      # Dependency audit: compares the pinned runtime dependencies against
+      # published vulnerability reports.
+      - name: Audit dependencies
+        run: pip-audit -r requirements.txt
