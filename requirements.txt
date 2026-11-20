@@ -1,1 +1,5 @@
-babel==2.9.0
+# The service has no runtime dependencies.
+#
+# babel==2.9.0 used to be pinned here. Nothing in the service imports it, and
+# pip-audit flagged it (PYSEC-2021-421 / CVE-2021-42771, fixed in 2.9.1), so it
+# was removed instead of upgraded or ignored.
